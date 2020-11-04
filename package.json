@@ -1,0 +1,35 @@
+{
+  "name": "thingy-api-brown",
+  "version": "1.0.0",
+  "description": "API Grandpa",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ASE2020-Brown/thingy-api-brown.git"
+  },
+  "author": "Jairo David Erazo Botero",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ASE2020-Brown/thingy-api-brown/issues"
+  },
+  "homepage": "https://github.com/ASE2020-Brown/thingy-api-brown#readme",
+  "devDependencies": {
+    "@types/jest": "^26.0.15",
+    "jest": "^26.6.2",
+    "ts-jest": "^26.4.3",
+    "typescript": "^4.0.5"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.0.0",
+    "mongodb": "^3.6.2",
+    "node-influx": "^1.0.2"
+  }
+}
