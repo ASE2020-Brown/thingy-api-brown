@@ -9,6 +9,8 @@ module.exports = {
   mongodbURL: process.env.MONGO_URL,
   mongodbName: process.env.MONGO_DB,
   port: parseInt(process.env.PORT),
+  mqttURL: process.env.MQTT_URL,
+  mqttPort: process.env.MQTT_PORT,
   api: {
     prefix: '/api',
   }
