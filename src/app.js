@@ -7,7 +7,8 @@ async function startServer(){
   const app = new Koa();
 
   app.use(bodyParser());
-  app.use(routes);
+  app.use(routes.getEnvironment);
+  app.use(routes.login);
   app.listen(config.port)
 }
 

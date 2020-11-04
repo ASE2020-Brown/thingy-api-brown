@@ -11,6 +11,7 @@ module.exports = {
   port: parseInt(process.env.PORT),
   mqttURL: process.env.MQTT_URL,
   mqttPort: process.env.MQTT_PORT,
+  jwtSecret: process.env.JWT_SECRET,
   api: {
     prefix: '/api',
   }
