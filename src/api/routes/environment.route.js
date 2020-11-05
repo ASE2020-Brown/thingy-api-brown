@@ -1,7 +1,8 @@
 const Router = require('koa-router');
 const router = new Router();
-const getcurrentTemperature = require('../middlewares/getCurrentTemperature');
+const environment = require('../middlewares/getCurrentTemperature');
 
-router.get('/temperature/:sensorId', getcurrentTemperature);
+router.get('/temperature/:sensorId', environment.currentTemperature);
+router.get('/connected/:sensorId', environment.shadowUpdate);
 
 module.exports = router.middleware();
