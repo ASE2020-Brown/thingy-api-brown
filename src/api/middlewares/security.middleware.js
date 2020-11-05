@@ -16,7 +16,10 @@ const login = async ctx => {
     ctx.body = { error: 'User not found'};
     return
   }
-  if(username === userDB.username && password === userDB.password){
+  const hashPassword = crypto.createHmac('sha256', config.cryptoSecret)
+                   .update(password)
+                   .digest('hex');
+  if(username === userDB.username && hashPassword === userDB.password){
     ctx.body = {
       token: jwt.issue({
         user: username,
