@@ -5,7 +5,7 @@ const config = require('./config');
 
 async function startServer(){
   const app = new Koa();
-
+  require('./loaders/mongo')(app);
   app.use(bodyParser());
   app.use(routes.getEnvironment);
   app.use(routes.login);
