@@ -4,7 +4,7 @@ let shadowUpdateObject;
 
 client.on('connect', () => {
   console.log('mqtt connection');
-  client.subscribe('things/green-3/shadow/update', () => {
+  client.subscribe('things/brown-3/shadow/update', () => {
     console.log('mqtt suscription');
   });
 });
@@ -14,7 +14,6 @@ client.on('message', (topic, message) => {
   const appId = messageObject.appId;
 
   shadowUpdateObject = messageObject;
-  console.log(shadowUpdateObject);
   if(appId === 'TEMP') {
     temperatureObject = JSON.parse(message.toString());
     //client.end();
