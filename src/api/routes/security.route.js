@@ -2,12 +2,11 @@ const Router = require('koa-router');
 const router = new Router();
 const securedRouter = new Router();
 const jwt = require('../../loaders/jwt');
-//const getUser = require('../middlewares/getUser');
-const login = require('../middlewares/login');
+const security = require('../middlewares/security.middleware');
 
 securedRouter.use(jwt.errorHandler()).use(jwt.jwt());
 
-//securedRouter.get('/user/:userId', getUser);
-router.post('/login', login);
+router.post('/login', security.login);
+router.post('/register', security.register);
 
 module.exports = router.middleware();

@@ -1,10 +1,8 @@
 const config = require('../config');
 const mqtt = require('mqtt');
 const options = {
-  clientId: 'brown_team_3',
   username: 'brown',
-  password: 'eo25706kln',
-  port: config.mqttPort
+  password: 'eo25706kln'
 };
 const client = mqtt.connect(config.mqttURL, options);
 
