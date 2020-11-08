@@ -3,7 +3,6 @@ const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser');
 const routes = require('./api');
 const config = require('./config');
-global.thingy = {};
  
 async function startServer(){
   const app = new Koa();
