@@ -13,6 +13,8 @@ module.exports = {
   mqttPort: process.env.MQTT_PORT,
   jwtSecret: process.env.JWT_SECRET,
   cryptoSecret: process.env.CRYPTO_SECRET,
+  thingyUser: process.env.THINGY_USER,
+  thingyPass: process.env.THINGY_PASS,
   api: {
     prefix: '/api',
   }

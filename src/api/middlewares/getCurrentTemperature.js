@@ -1,27 +1,5 @@
-const client = require('../../loaders/mqtt');
-let temperatureObject;
-let shadowUpdateObject;
-
-client.on('connect', () => {
-  console.log('mqtt connection');
-  client.subscribe('things/brown-3/shadow/update', () => {
-    console.log('mqtt suscription');
-  });
-});
-
-client.on('message', (topic, message) => {
-  const messageObject = JSON.parse(message.toString());
-  const appId = messageObject.appId;
-
-  shadowUpdateObject = messageObject;
-  if(appId === 'TEMP') {
-    temperatureObject = JSON.parse(message.toString());
-    //client.end();
-  }
-});
-
 const getCurrentTemperature = async ctx => {
-  if(!temperatureObject) {
+  if(!ctx.app.temperature) {
       ctx.status = 401;
       ctx.body = { error: 'Not signal from thingy'};
       return;
@@ -29,19 +7,19 @@ const getCurrentTemperature = async ctx => {
   return ctx.body = {
     id: '1',
     sensor: 'brown-3',
-    value: parseFloat(temperatureObject.data),
+    value: parseFloat(ctx.app.temperature.data),
     units: 'celsius',
-    timestamp: temperatureObject.ts
+    timestamp: ctx.app.temperature.ts
   };
 };
 
 const getShadowUpdate = async ctx => {
-  if(!shadowUpdateObject) {
+  if(!ctx.app.message) {
     ctx.status = 401;
     ctx.body = { error: 'Not signal from thingy'};
     return;
   }
-  return ctx.body = shadowUpdateObject;
+  return ctx.body = ctx.app.message;
 };
 
 module.exports.currentTemperature = getCurrentTemperature;
