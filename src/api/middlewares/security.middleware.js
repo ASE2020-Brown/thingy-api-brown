@@ -1,6 +1,5 @@
 const jwt = require('../../loaders/jwt');
 const config = require('../../config');
-const ObjectID = require('mongodb').ObjectID;
 const crypto = require('crypto');
 
 const login = async ctx => {
