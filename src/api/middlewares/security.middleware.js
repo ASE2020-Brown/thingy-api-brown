@@ -1,6 +1,9 @@
 const jwt = require('../../loaders/jwt');
 const config = require('../../config');
 const crypto = require('crypto');
+const { v4: uuidv4 } = require('uuid');
+const redis = require("redis");
+const rediscl = redis.createClient();
 
 const login = async ctx => {
   let username = ctx.request.body.username;
@@ -19,11 +22,19 @@ const login = async ctx => {
                    .update(password)
                    .digest('hex');
   if(username === userDB.username && hashPassword === userDB.password){
+    let jti = uuidv4();
+    let refresh_token = jwt.issue({
+      user: 'user',
+      role: 'admin',
+      jti: jti
+    });
+    rediscl.set(jti, JSON.stringify({
+      token: refresh_token,
+      }),
+      rediscl.print
+    );
     ctx.body = {
-      token: jwt.issue({
-        user: username,
-        role: 'user'
-      })
+      token: refresh_token
     };
   } else {
     ctx.status = 401;
@@ -38,7 +49,7 @@ const register = async ctx => {
   }
 
   if (!user.username) ctx.throw(400, {'error': '"username" is a required field'});
-  if (!user.password) ctx.throw(400, {'error': '"username" is a required field'});
+  if (!user.password) ctx.throw(400, {'error': '"password" is a required field'});
   if(await userExist(ctx, user.username)) {
     ctx.status = 401;
     ctx.body = { error: 'Username exists'};
@@ -64,5 +75,20 @@ async function userExist(ctx, username){
   });
 }
 
+const logout = async ctx => {
+  if (ctx.request.headers.authorization && ctx.request.headers.authorization.split(' ')[0] === 'Bearer') {
+    const token = ctx.request.headers.authorization.split(' ')[1];
+    const jwtPayload = jwt.verify(token);
+    rediscl.del(jwtPayload.jti);
+    ctx.body = {
+      jti: jwtPayload.jti
+    };
+  } else {
+    ctx.status = 401;
+    ctx.body = { error: 'Invalid login'};
+  }
+};
+
 module.exports.login = login;
 module.exports.register = register;
+module.exports.logout = logout;
