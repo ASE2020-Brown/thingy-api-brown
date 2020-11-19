@@ -6,10 +6,10 @@ const getCurrentTemperature = async ctx => {
   }
   return ctx.body = {
     id: '1',
-    sensor: 'brown-3',
+    sensor: ctx.params.sensorId,
     value: parseFloat(ctx.app.temperature.data),
     units: 'celsius',
-    timestamp: ctx.app.temperature.ts
+    ts: ctx.app.temperature.ts
   };
 };
 
@@ -28,12 +28,12 @@ const setUpdateAccepted = async ctx => {
     ctx.body = { error: 'Not signal from thingy'};
     return;
   } else {
-    ctx.app.thingy.subscribe('things/brown-3/shadow/update/accepted', (err) => {
+    ctx.app.thingy.subscribe('things/' + ctx.request.body.sensorId + '/shadow/update/accepted', (err) => {
       if (!err) {
-        ctx.app.thingy.publish('things/brown-3/shadow/update/accepted', 
+        ctx.app.thingy.publish('things/' + ctx.request.body.sensorId + '/shadow/update/accepted', 
         '{"appId":"LED","data":{"color":"00ff00"},"messageType":"CFG_SET"}');
         setTimeout(() => {
-          ctx.app.thingy.publish('things/brown-3/shadow/update/accepted', 
+          ctx.app.thingy.publish('things/'+ ctx.request.body.sensorId + '/shadow/update/accepted', 
           '{"appId":"LED","data":{"color":"ff0000"},"messageType":"CFG_SET"}');
         }, 60000)
       }
