@@ -11,7 +11,8 @@ async function startServer(){
     .use(bodyParser())
     .use(cors())
     .use(routes.getEnvironment)
-    .use(routes.security);
+    .use(routes.security)
+    .use(routes.protected);
   server = app.listen(config.port);
 
   // socket connection
