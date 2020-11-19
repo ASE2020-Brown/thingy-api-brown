@@ -10,7 +10,7 @@ async function startServer(){
   app
     .use(bodyParser())
     .use(cors())
-    .use(routes.getEnvironment)
+    .use(routes.sensors)
     .use(routes.security)
     .use(routes.protected);
   server = app.listen(config.port);

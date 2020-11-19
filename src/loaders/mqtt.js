@@ -7,6 +7,7 @@ const options = {
 
 module.exports = function (app, io) {
   const thingyClient = mqtt.connect(config.mqttURL, options);
+  app.thingy = thingyClient;
   thingyClient.on('connect', () => {
     thingyClient.subscribe('things/brown-3/shadow/update', () => {
       console.log('Thingy suscribed')
