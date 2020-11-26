@@ -1,5 +1,8 @@
 const config = require('../config');
 const mqtt = require('mqtt');
+const clientInflux = require('./influxdb');
+const {Point} = require('@influxdata/influxdb-client');
+
 const options = {
   username: config.thingyUser,
   password: config.thingyPass
@@ -27,6 +30,20 @@ module.exports = function (app, io) {
     }
     if(app.message.appId === 'TEMP') {
       app.temperature = JSON.parse(message.toString());
+      const writeApi = clientInflux.getWriteApi(config.influxOrg, config.influxBucket);
+      writeApi.useDefaultTags({sensor: topic.split('/')[1]})
+
+      const point = new Point('temperature')
+        .floatField('degree', parseFloat(app.temperature.data))
+      writeApi.writePoint(point)
+      writeApi
+          .close()
+          .then(() => {
+              console.log('Data inserted')
+          })
+          .catch(e => {
+              console.error(e)
+          });
     }
   });
 };

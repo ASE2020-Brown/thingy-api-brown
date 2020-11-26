@@ -1,21 +1,29 @@
+const clientInflux = require('../../loaders/influxdb');
+const config = require('../../config');
+
 const getCurrentTemperature = async ctx => {
-  if(!ctx.app.temperature) {
+  const queryApi = clientInflux.getQueryApi(config.influxOrg);
+  const fluxQuery = 'from(bucket: "' + config.influxBucket + '") |> range(start: -5m) |> last()';
+  let lastTemperature = await queryApi.collectRows(fluxQuery);
+
+  console.log('lastTemperature', lastTemperature)
+
+  if(typeof lastTemperature === undefined) {
       ctx.status = 401;
       ctx.body = { error: 'Not signal from thingy'};
       return;
   }
   return ctx.body = {
-    id: '1',
-    sensor: ctx.params.sensorId,
-    value: parseFloat(ctx.app.temperature.data),
+    sensor: lastTemperature[0].sensor,
+    value: parseFloat(lastTemperature[0]._value),
     units: 'celsius',
-    ts: ctx.app.temperature.ts
+    time: lastTemperature[0]._time
   };
 };
 
 const getShadowUpdate = async ctx => {
   if(!ctx.app.message) {
-    ctx.status = 401;
+    ctx.status = 404;
     ctx.body = { error: 'Not signal from thingy'};
     return;
   }
@@ -28,16 +36,17 @@ const setUpdateAccepted = async ctx => {
     ctx.body = { error: 'Not signal from thingy'};
     return;
   } else {
-    ctx.app.thingy.subscribe('things/' + ctx.request.body.sensorId + '/shadow/update/accepted', (err) => {
+    ctx.app.thingy.subscribe('things/' + ctx.request.body.sensor + '/shadow/update/accepted', (err) => {
       if (!err) {
-        ctx.app.thingy.publish('things/' + ctx.request.body.sensorId + '/shadow/update/accepted', 
+        ctx.app.thingy.publish('things/' + ctx.request.body.sensor + '/shadow/update/accepted', 
         '{"appId":"LED","data":{"color":"00ff00"},"messageType":"CFG_SET"}');
         setTimeout(() => {
-          ctx.app.thingy.publish('things/'+ ctx.request.body.sensorId + '/shadow/update/accepted', 
+          ctx.app.thingy.publish('things/'+ ctx.request.body.sensor + '/shadow/update/accepted', 
           '{"appId":"LED","data":{"color":"ff0000"},"messageType":"CFG_SET"}');
-        }, 60000)
+        }, 6000)
       }
     })
+    console.log('ctx.request.body.sensorId',ctx.request.body.sensor);
   }
   return ctx.body = {
     msg: 'Help informed'
