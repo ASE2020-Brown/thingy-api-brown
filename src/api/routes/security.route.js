@@ -8,7 +8,8 @@ securedRouter.use(jwt.errorHandler()).use(jwt.jwt());
 
 router.post('/login', security.login);
 router.post('/register', security.register);
-securedRouter.post('/logout', security.logout)
+securedRouter.post('/logout', security.logout);
+securedRouter.get('/profile/:userId', security.profile);
 
 module.exports.public = router.middleware();
 module.exports.protected = securedRouter.middleware();
