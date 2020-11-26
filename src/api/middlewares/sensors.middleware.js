@@ -21,7 +21,7 @@ const getCurrentTemperature = async ctx => {
 
 const getShadowUpdate = async ctx => {
   if(!ctx.app.message) {
-    ctx.status = 401;
+    ctx.status = 404;
     ctx.body = { error: 'Not signal from thingy'};
     return;
   }
