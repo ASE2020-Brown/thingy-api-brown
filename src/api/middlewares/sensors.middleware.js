@@ -1,15 +1,21 @@
+const clientInflux = require('../../loaders/influxdb');
+const config = require('../../config');
+
 const getCurrentTemperature = async ctx => {
-  if(!ctx.app.temperature) {
+  const queryApi = clientInflux.getQueryApi(config.influxOrg);
+  const fluxQuery = 'from(bucket: "' + config.influxBucket + '") |> range(start: -5m) |> last()';
+  let lastTemperature = await queryApi.collectRows(fluxQuery);
+
+  if(typeof lastTemperature === undefined) {
       ctx.status = 401;
       ctx.body = { error: 'Not signal from thingy'};
       return;
   }
   return ctx.body = {
-    id: '1',
-    sensor: ctx.params.sensorId,
-    value: parseFloat(ctx.app.temperature.data),
+    sensor: lastTemperature[0].sensor,
+    value: parseFloat(lastTemperature[0]._value),
     units: 'celsius',
-    ts: ctx.app.temperature.ts
+    time: lastTemperature[0]._time
   };
 };
 
