@@ -39,11 +39,10 @@ module.exports = function (app, io) {
       writeApi
           .close()
           .then(() => {
-              console.log('FINISHED')
+              console.log('Data inserted')
           })
           .catch(e => {
               console.error(e)
-              console.log('\\nFinished ERROR')
           });
     }
   });
