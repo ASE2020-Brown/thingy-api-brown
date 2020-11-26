@@ -45,11 +45,13 @@ const login = async ctx => {
 const register = async ctx => {
   let user = {
     username: ctx.request.body.username,
-    password: ctx.request.body.password
+    password: ctx.request.body.password,
+    sensor: ctx.request.body.sensor
   }
 
   if (!user.username) ctx.throw(400, {'error': '"username" is a required field'});
   if (!user.password) ctx.throw(400, {'error': '"password" is a required field'});
+  if (!user.sensor) ctx.throw(400, {'error': '"sensor" is a required field'});
   if(await userExist(ctx, user.username)) {
     ctx.status = 401;
     ctx.body = { error: 'Username exists'};
@@ -89,6 +91,14 @@ const logout = async ctx => {
   }
 };
 
+const profile = async ctx => {
+  return ctx.body = await ctx.app.users.findOne(
+    {'username': ctx.params.userId},
+    { projection: {_id:0, password:0} }
+  );
+}
+
 module.exports.login = login;
 module.exports.register = register;
 module.exports.logout = logout;
+module.exports.profile = profile;
