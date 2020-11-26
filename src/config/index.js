@@ -15,6 +15,10 @@ module.exports = {
   cryptoSecret: process.env.CRYPTO_SECRET,
   thingyUser: process.env.THINGY_USER,
   thingyPass: process.env.THINGY_PASS,
+  influxToken: process.env.INFLUX_TOKEN,
+  influxOrg: process.env.INFLUX_ORG,
+  influxBucket: process.env.INFLUX_BUCKET,
+  influxURL: process.env.INFLUX_URL,
   api: {
     prefix: '/api',
   }
