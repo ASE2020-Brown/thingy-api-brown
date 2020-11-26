@@ -6,6 +6,8 @@ const getCurrentTemperature = async ctx => {
   const fluxQuery = 'from(bucket: "' + config.influxBucket + '") |> range(start: -5m) |> last()';
   let lastTemperature = await queryApi.collectRows(fluxQuery);
 
+  console.log('lastTemperature', lastTemperature)
+
   if(typeof lastTemperature === undefined) {
       ctx.status = 401;
       ctx.body = { error: 'Not signal from thingy'};
