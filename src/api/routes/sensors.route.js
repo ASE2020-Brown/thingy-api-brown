@@ -6,6 +6,6 @@ const jwt = require('../../loaders/jwt');
 securedRouter.use(jwt.validateJTI()).use(jwt.errorHandler()).use(jwt.jwt());
 securedRouter.get('/temperature/:sensorId', environment.currentTemperature);
 securedRouter.get('/connected/:sensorId', environment.shadowUpdate);
-securedRouter.post('/helpyou/:sensorId', environment.updateAccepted);
+securedRouter.post('/helpyou', environment.updateAccepted);
 
 module.exports = securedRouter.middleware();

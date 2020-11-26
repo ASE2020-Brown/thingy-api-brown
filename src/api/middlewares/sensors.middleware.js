@@ -34,16 +34,17 @@ const setUpdateAccepted = async ctx => {
     ctx.body = { error: 'Not signal from thingy'};
     return;
   } else {
-    ctx.app.thingy.subscribe('things/' + ctx.request.body.sensorId + '/shadow/update/accepted', (err) => {
+    ctx.app.thingy.subscribe('things/' + ctx.request.body.sensor + '/shadow/update/accepted', (err) => {
       if (!err) {
-        ctx.app.thingy.publish('things/' + ctx.request.body.sensorId + '/shadow/update/accepted', 
+        ctx.app.thingy.publish('things/' + ctx.request.body.sensor + '/shadow/update/accepted', 
         '{"appId":"LED","data":{"color":"00ff00"},"messageType":"CFG_SET"}');
         setTimeout(() => {
-          ctx.app.thingy.publish('things/'+ ctx.request.body.sensorId + '/shadow/update/accepted', 
+          ctx.app.thingy.publish('things/'+ ctx.request.body.sensor + '/shadow/update/accepted', 
           '{"appId":"LED","data":{"color":"ff0000"},"messageType":"CFG_SET"}');
-        }, 60000)
+        }, 6000)
       }
     })
+    console.log('ctx.request.body.sensorId',ctx.request.body.sensor);
   }
   return ctx.body = {
     msg: 'Help informed'
