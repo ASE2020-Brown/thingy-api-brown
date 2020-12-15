@@ -3,7 +3,10 @@ const config = require('../../config');
 
 const getCurrentTemperature = async ctx => {
   const queryApi = clientInflux.getQueryApi(config.influxOrg);
-  const fluxQuery = 'from(bucket: "' + config.influxBucket + '") |> range(start: -5m) |> last()';
+  const fluxQuery = 'from(bucket: "' + config.influxBucket + '") |> range(start: -5m) ' +
+    '|> filter(fn: (r) => r._measurement == "temperature") ' +
+    '|> last() ' +
+    '';
   let lastTemperature = await queryApi.collectRows(fluxQuery);
 
   console.log('lastTemperature', lastTemperature)
@@ -18,6 +21,27 @@ const getCurrentTemperature = async ctx => {
     value: parseFloat(lastTemperature[0]._value),
     units: 'celsius',
     time: lastTemperature[0]._time
+  };
+};
+
+const getTemperatureLog = async ctx => {
+  const queryApi = clientInflux.getQueryApi(config.influxOrg);
+  const fluxQuery = 'from(bucket: "' + config.influxBucket + '") |> range(start: -30m) ' +
+    '|> filter(fn: (r) => r._measurement == "temperature")';
+  let temperatureLog = await queryApi.collectRows(fluxQuery);
+
+  console.log('temperatureLog', temperatureLog)
+
+  if(typeof temperatureLog === undefined) {
+      ctx.status = 401;
+      ctx.body = { error: 'Not signal from thingy'};
+      return;
+  }
+  return ctx.body = {
+    sensor: temperatureLog[0].sensor,
+    value: parseFloat(temperatureLog[0]._value),
+    units: 'celsius',
+    time: temperatureLog[0]._time
   };
 };
 
@@ -56,3 +80,4 @@ const setUpdateAccepted = async ctx => {
 module.exports.currentTemperature = getCurrentTemperature;
 module.exports.shadowUpdate = getShadowUpdate;
 module.exports.updateAccepted = setUpdateAccepted;
+module.exports.temperatureLog = getTemperatureLog;
