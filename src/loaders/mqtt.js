@@ -2,6 +2,8 @@ const config = require('../config');
 const mqtt = require('mqtt');
 const clientInflux = require('./influxdb');
 const {Point} = require('@influxdata/influxdb-client');
+const Telegraf = require('telegraf');
+const bot = new Telegraf(config.telegramToken);
 
 const options = {
   username: config.thingyUser,
@@ -26,7 +28,9 @@ module.exports = function (app, io) {
     app.message = JSON.parse(message.toString());
     if(app.message.appId === 'BUTTON') {
       console.log('BUTTON');
-      io.emit('ALARM', { alarm: true})
+      io.emit('ALARM', { alarm: true});
+      console.log(app.chat.chat_id);
+      bot.telegram.sendMessage(app.chat.chat_id, "Alarm");
     }
     if(app.message.appId === 'TEMP') {
       app.temperature = JSON.parse(message.toString());

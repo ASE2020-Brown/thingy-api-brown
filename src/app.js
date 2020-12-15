@@ -7,6 +7,7 @@ const config = require('./config');
 async function startServer(){
   const app = new Koa();
   require('./loaders/mongo')(app);
+  require('./loaders/bot')(app);
   app
     .use(bodyParser())
     .use(cors())

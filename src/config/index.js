@@ -19,6 +19,7 @@ module.exports = {
   influxOrg: process.env.INFLUX_ORG,
   influxBucket: process.env.INFLUX_BUCKET,
   influxURL: process.env.INFLUX_URL,
+  telegramToken: process.env.TELEGRAM_TOKEN,
   api: {
     prefix: '/api',
   }
