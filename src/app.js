@@ -8,6 +8,7 @@ async function startServer(){
   const app = new Koa();
   require('./loaders/mongo')(app);
   require('./loaders/bot')(app);
+  require('./loaders/mail')(app);
   app
     .use(bodyParser())
     .use(cors())

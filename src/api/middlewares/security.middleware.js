@@ -96,9 +96,28 @@ const profile = async ctx => {
     {'username': ctx.params.userId},
     { projection: {_id:0, password:0} }
   );
-}
+};
+
+const invite = async ctx => {
+  const mailOptions = {
+    from: config.mailUser,
+    to: ctx.request.body.to,
+    subject: ctx.request.body.subject,
+    text: ctx.request.body.text
+  };
+
+  try {
+    await ctx.app.mailer.sendMail(mailOptions);
+    ctx.status = 200;
+    ctx.body = { msg: 'Email sent'};
+  } catch (error) {
+    ctx.status = 401;
+    ctx.body = { msg: 'Email error'};
+  }
+};
 
 module.exports.login = login;
 module.exports.register = register;
 module.exports.logout = logout;
 module.exports.profile = profile;
+module.exports.invite = invite;

@@ -37,6 +37,7 @@
     "mongodb": "^3.6.2",
     "mqtt": "^4.2.4",
     "node-influx": "^1.0.2",
+    "nodemailer": "^6.4.17",
     "redis": "^3.0.2",
     "socket.io": "^3.0.1",
     "telegraf": "^3.38.0",
