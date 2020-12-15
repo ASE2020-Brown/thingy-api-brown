@@ -10,6 +10,7 @@ router.post('/login', security.login);
 router.post('/register', security.register);
 securedRouter.post('/logout', security.logout);
 securedRouter.get('/profile/:userId', security.profile);
+securedRouter.post('/invite', security.invite);
 
 module.exports.public = router.middleware();
 module.exports.protected = securedRouter.middleware();
