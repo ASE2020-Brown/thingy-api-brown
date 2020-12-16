@@ -23,10 +23,22 @@ async function startServer(){
     origins:['http://localhost:8080'],
    };
   const io = require('socket.io')(server, options);
-  require('./loaders/mqtt')(app, io);
-  io.on('connection', (socket) => {
-    console.log('Socket created')
+  
+  const thingySockets = {
+    brown_1: io.of('/brown-1'),
+    brown_3: io.of('/brown-3')
+  };
+
+  require('./loaders/mqtt')(app, thingySockets);
+
+  thingySockets.brown_1.on('connection', socket => {
+    console.log('Brown-1 connected');
   });
+
+  thingySockets.brown_3.on('connection', socket => {
+    console.log('Brown-3 connected');
+  });
+
 }
 
 startServer();

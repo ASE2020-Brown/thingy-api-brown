@@ -11,7 +11,7 @@ const options = {
   password: config.thingyPass
 };
 
-module.exports = function (app, io) {
+module.exports = function (app, thingySockets) {
   const thingyClient = mqtt.connect(config.mqttURL, options);
   app.thingy = thingyClient;
   thingyClient.on('connect', () => {
@@ -27,9 +27,7 @@ module.exports = function (app, io) {
     const thingy = topic.split('/')[1];    
     app.message = JSON.parse(message.toString());
     if(app.message.appId === 'BUTTON') {
-      console.log('BUTTON');
-      io.emit('ALARM', { alarm: true});
-      sendMessageUsersByThingy(thingy);
+      sendMessageUsersByThingy(thingy, thingySockets);
     }
     if(app.message.appId === 'TEMP') {
       console.log(thingy);
@@ -53,7 +51,7 @@ module.exports = function (app, io) {
   });
 };
 
-async function sendMessageUsersByThingy(thingy) {
+async function sendMessageUsersByThingy(thingy, thingySockets) {
   const client = await MongoClient.connect(config.mongodbURL, { useUnifiedTopology: true });
   const db = client.db(config.mongodbName);
   const users = db.collection('users');
@@ -66,4 +64,18 @@ async function sendMessageUsersByThingy(thingy) {
   userDB.chat_id.forEach( id => {
     bot.telegram.sendMessage(id, "Alarm");
   });
+
+  switch (thingy) {
+    case 'brown-1':
+      thingySockets.brown_1.emit('ALARM', { alarm: true});
+      break;
+    
+    case 'brown-3':
+      thingySockets.brown_3.emit('ALARM', { alarm: true});
+      console.log('BUTTON brown-3');
+      break;
+
+    default:
+      break;
+  }
 }

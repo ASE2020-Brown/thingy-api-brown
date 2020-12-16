@@ -24,7 +24,7 @@ const login = async ctx => {
   if(username === userDB.username && hashPassword === userDB.password){
     let jti = uuidv4();
     let refresh_token = jwt.issue({
-      user: 'user',
+      user: username,
       role: 'admin',
       jti: jti
     });
