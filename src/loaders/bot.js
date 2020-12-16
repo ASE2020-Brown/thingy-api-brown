@@ -17,9 +17,7 @@ module.exports = function (app) {
     let prefixThingy = ctx.update.message.text.substring(0, 8);
     if(prefixThingy === '/thingy/') {
       app.nameThingy = ctx.update.message.text.substring(8, ctx.update.message.text.length);
-      app.chat = {
-        chat_id: ctx.chat.id
-      };
+      app.chat_id = ctx.chat.id;
       botMiddleware(app);
     }
   });
