@@ -24,7 +24,7 @@ const login = async ctx => {
   if(username === userDB.username && hashPassword === userDB.password){
     let jti = uuidv4();
     let refresh_token = jwt.issue({
-      user: 'user',
+      user: username,
       role: 'admin',
       jti: jti
     });
@@ -46,7 +46,8 @@ const register = async ctx => {
   let user = {
     username: ctx.request.body.username,
     password: ctx.request.body.password,
-    sensor: ctx.request.body.sensor
+    sensor: ctx.request.body.sensor,
+    chat_id: []
   }
 
   if (!user.username) ctx.throw(400, {'error': '"username" is a required field'});

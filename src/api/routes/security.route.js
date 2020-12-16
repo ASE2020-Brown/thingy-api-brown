@@ -4,7 +4,9 @@ const securedRouter = new Router();
 const jwt = require('../../loaders/jwt');
 const security = require('../middlewares/security.middleware');
 
-securedRouter.use(jwt.errorHandler()).use(jwt.jwt());
+securedRouter
+  .use(jwt.errorHandler())
+  .use(jwt.jwt());
 
 router.post('/login', security.login);
 router.post('/register', security.register);
