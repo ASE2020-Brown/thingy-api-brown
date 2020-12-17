@@ -146,6 +146,28 @@ async function updateUser(ctx) {
   ctx.body = await ctx.app.users.findOne(userID);
 }
 
+const changePassword = async ctx => {
+  const hashPassword = crypto.createHmac('sha256', config.cryptoSecret)
+                   .update(ctx.request.body.password)
+                   .digest('hex');
+  const newPassword = hashPassword;
+  let userDB = await ctx.app.users.findOne(
+    {'username': ctx.request.body.username}
+  );
+  if (!userDB) {
+    return false
+  }
+  let userID = {"_id": ObjectID(userDB._id)};
+  let valuesToUpdate = {
+    $set: {
+      password: newPassword
+    }
+  };
+
+  await ctx.app.users.updateOne(userID, valuesToUpdate);
+  ctx.body = await ctx.app.users.findOne(userID);
+};
+
 module.exports.login = login;
 module.exports.register = register;
 module.exports.logout = logout;
@@ -153,3 +175,4 @@ module.exports.profile = profile;
 module.exports.invite = invite;
 module.exports.deleteUser = deleteUser;
 module.exports.updateUser = updateUser;
+module.exports.changePassword = changePassword;
