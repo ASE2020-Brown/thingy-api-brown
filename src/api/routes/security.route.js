@@ -14,6 +14,7 @@ securedRouter.post('/logout', security.logout);
 securedRouter.get('/profile/:userId', security.profile);
 securedRouter.post('/invite', security.invite);
 securedRouter.post('/user/delete', security.deleteUser);
+securedRouter.post('/user/update', security.updateUser);
 
 module.exports.public = router.middleware();
 module.exports.protected = securedRouter.middleware();
