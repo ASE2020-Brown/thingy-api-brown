@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const redis = require("redis");
 const rediscl = redis.createClient();
+const ObjectID = require('mongodb').ObjectID;
 
 const login = async ctx => {
   let username = ctx.request.body.username;
@@ -24,7 +25,7 @@ const login = async ctx => {
   if(username === userDB.username && hashPassword === userDB.password){
     let jti = uuidv4();
     let refresh_token = jwt.issue({
-      user: 'user',
+      user: username,
       role: 'admin',
       jti: jti
     });
@@ -46,7 +47,8 @@ const register = async ctx => {
   let user = {
     username: ctx.request.body.username,
     password: ctx.request.body.password,
-    sensor: ctx.request.body.sensor
+    sensor: ctx.request.body.sensor,
+    chat_id: []
   }
 
   if (!user.username) ctx.throw(400, {'error': '"username" is a required field'});
@@ -96,9 +98,81 @@ const profile = async ctx => {
     {'username': ctx.params.userId},
     { projection: {_id:0, password:0} }
   );
+};
+
+const invite = async ctx => {
+  const mailOptions = {
+    from: config.mailUser,
+    to: ctx.request.body.to,
+    subject: ctx.request.body.subject,
+    text: ctx.request.body.text
+  };
+
+  try {
+    await ctx.app.mailer.sendMail(mailOptions);
+    ctx.status = 200;
+    ctx.body = { msg: 'Email sent'};
+  } catch (error) {
+    ctx.status = 401;
+    ctx.body = { msg: 'Email error'};
+  }
+};
+
+async function deleteUser(ctx) {
+  let userDB = await ctx.app.users.findOne(
+    {'username': ctx.request.body.username}
+  );
+  if (!userDB) {
+    return false
+  }
+  let userID = {"_id": ObjectID(userDB._id)};
+
+  ctx.body = await ctx.app.users.deleteOne(userID);
 }
+
+async function updateUser(ctx) {
+  let userDB = await ctx.app.users.findOne(
+    {'username': ctx.request.body.username}
+  );
+  if (!userDB) {
+    return false
+  }
+  let userID = {"_id": ObjectID(userDB._id)};
+  let valuesToUpdate = {
+    $set: ctx.request.body
+  };
+
+  await ctx.app.users.updateOne(userID, valuesToUpdate);
+  ctx.body = await ctx.app.users.findOne(userID);
+}
+
+const changePassword = async ctx => {
+  const hashPassword = crypto.createHmac('sha256', config.cryptoSecret)
+                   .update(ctx.request.body.password)
+                   .digest('hex');
+  const newPassword = hashPassword;
+  let userDB = await ctx.app.users.findOne(
+    {'username': ctx.request.body.username}
+  );
+  if (!userDB) {
+    return false
+  }
+  let userID = {"_id": ObjectID(userDB._id)};
+  let valuesToUpdate = {
+    $set: {
+      password: newPassword
+    }
+  };
+
+  await ctx.app.users.updateOne(userID, valuesToUpdate);
+  ctx.body = await ctx.app.users.findOne(userID);
+};
 
 module.exports.login = login;
 module.exports.register = register;
 module.exports.logout = logout;
 module.exports.profile = profile;
+module.exports.invite = invite;
+module.exports.deleteUser = deleteUser;
+module.exports.updateUser = updateUser;
+module.exports.changePassword = changePassword;
