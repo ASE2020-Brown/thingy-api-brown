@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const redis = require("redis");
 const rediscl = redis.createClient();
+const ObjectID = require('mongodb').ObjectID;
 
 const login = async ctx => {
   let username = ctx.request.body.username;
@@ -117,8 +118,18 @@ const invite = async ctx => {
   }
 };
 
+async function deleteUser(ctx) {
+  let existingUser = await ctx.app.users.findOne(
+    {'username': ctx.request.body.username}
+  );
+  let userID = {"_id": ObjectID(existingUser._id)};
+
+  ctx.body = await ctx.app.users.deleteOne(userID);
+}
+
 module.exports.login = login;
 module.exports.register = register;
 module.exports.logout = logout;
 module.exports.profile = profile;
 module.exports.invite = invite;
+module.exports.deleteUser = deleteUser;
