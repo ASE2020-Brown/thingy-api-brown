@@ -13,6 +13,7 @@ router.post('/register', security.register);
 securedRouter.post('/logout', security.logout);
 securedRouter.get('/profile/:userId', security.profile);
 securedRouter.post('/invite', security.invite);
+securedRouter.post('/user/delete', security.deleteUser);
 
 module.exports.public = router.middleware();
 module.exports.protected = securedRouter.middleware();
