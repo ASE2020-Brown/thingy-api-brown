@@ -119,12 +119,31 @@ const invite = async ctx => {
 };
 
 async function deleteUser(ctx) {
-  let existingUser = await ctx.app.users.findOne(
+  let userDB = await ctx.app.users.findOne(
     {'username': ctx.request.body.username}
   );
-  let userID = {"_id": ObjectID(existingUser._id)};
+  if (!userDB) {
+    return false
+  }
+  let userID = {"_id": ObjectID(userDB._id)};
 
   ctx.body = await ctx.app.users.deleteOne(userID);
+}
+
+async function updateUser(ctx) {
+  let userDB = await ctx.app.users.findOne(
+    {'username': ctx.request.body.username}
+  );
+  if (!userDB) {
+    return false
+  }
+  let userID = {"_id": ObjectID(userDB._id)};
+  let valuesToUpdate = {
+    $set: ctx.request.body
+  };
+
+  await ctx.app.users.updateOne(userID, valuesToUpdate);
+  ctx.body = await ctx.app.users.findOne(userID);
 }
 
 module.exports.login = login;
@@ -133,3 +152,4 @@ module.exports.logout = logout;
 module.exports.profile = profile;
 module.exports.invite = invite;
 module.exports.deleteUser = deleteUser;
+module.exports.updateUser = updateUser;
