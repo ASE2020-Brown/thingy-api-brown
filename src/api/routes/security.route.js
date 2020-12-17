@@ -15,6 +15,7 @@ securedRouter.get('/profile/:userId', security.profile);
 securedRouter.post('/invite', security.invite);
 securedRouter.post('/user/delete', security.deleteUser);
 securedRouter.post('/user/update', security.updateUser);
+securedRouter.post('/user/change_password', security.changePassword);
 
 module.exports.public = router.middleware();
 module.exports.protected = securedRouter.middleware();
